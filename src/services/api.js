@@ -1,16 +1,13 @@
-import { API_KEY } from '../../configurations/environment/env.json';
+import axios from 'axios';
 
+const axiosClient = axios.create({
+  baseURL: 'https://www.googleapis.com',
+  headers: {
+    Accept: 'application/json',
+  },
+});
 
-const setHeaderWithToken = (token) => {
-  if (token) {
-    this.api.setHeader('Authorization', 'Bearer ' + token)
-  }
-}
+const getHolidayList =
+  '/calendar/v3/calendars/en.sa%23holiday%40group.v.calendar.google.com/events';
 
-
-const getHolidayList='/Documents/Download/'
-
-export default {
-  getHolidayList
-
-}
+export {axiosClient, getHolidayList};

@@ -1,78 +1,92 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import {
-  Image,
-  TouchableOpacity,
   FlatList,
   View,
   SafeAreaView,
   Text,
-  Platform,
+  ActivityIndicator,
 } from 'react-native';
 import styles from './styles';
-
 import {connect} from 'react-redux';
-import {loadHolidayList} from '../../../../redux/actions';
+import {loadHolidayList} from '../../../../redux/actions/homeActions';
+import Header from '../../shared/Header/Header';
 
 class Home extends React.Component {
   static navigationOptions = {
     header: null,
+    isPulled: false,
   };
 
   constructor(props) {
     super(props);
-    this.state = {
-      processing: true,
-    };
   }
 
-  componentDidMount(){
-    this.fetchContent();
+  componentDidMount() {
+    this.tryToGet();
   }
 
-
-  fetchContent() {
-    try {
-      this.setState({processing: true});
-      Promise.all([this.props.fetchData()]).then(() => {
-        this.setState({processing: false});
-      });
-    } catch (e) {
-      this.setState({processing: false});
-    }
-  }
-
+  tryToGet = () => {
+    this.props.fetchData();
+  };
   render() {
-    return (
-      <View>
-        <SafeAreaView>
-        <View style={styles.container}>
-          <View>
-            <FlatList
-              data={[1,2,3,4,5,6
-              ]}
-              renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
-            />
-          </View> 
-        </View>
+    const {data, loader} = this.props;
 
-        </SafeAreaView>
-      </View>
+    return (
+      <SafeAreaView>
+        {loader ? (
+          <View style={styles.Container}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : (
+          <View style={styles.mainContainer}>
+            <Header />
+            <FlatList
+              data={data}
+              onRefresh={() => this.tryToGet()}
+              refreshing={loader}
+              renderItem={({item}) => (
+                <View style={styles.tile}>
+                  <View style={styles.tileView}>
+                    <Text style={styles.holidayNameText}>{item.summary}</Text>
+                    <Text style={styles.holidayDate}>{item.end.date}</Text>
+                  </View>
+                </View>
+              )}
+            />
+          </View>
+        )} 
+      </SafeAreaView>
     );
   }
 }
 
 function mapStateToProps(state) {
-  const {} = state.home;
-
-  return {};
+  const {data, loader} = state.home;
+  return {
+    data,
+    loader,
+  };
 }
 
 const mapDispatchToProps = {
-  fetchData: loadHolidayList
-
+  fetchData: loadHolidayList,
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
 )(Home);
+
+{
+  /* <View style={styles.container}>
+        <View>
+          <Text>Holiday App</Text>
+          <FlatList
+            data={data}
+            renderItem={({item}) => (
+              <Text style={styles.item}>{item.summary}</Text>
+            )}
+          />
+        </View>
+      </View> */
+}

@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React, {Fragment} from 'react';
 import {Provider} from 'react-redux';
-import {applyMiddleware, createStore} from 'redux';
-import {createLogger} from 'redux-logger';
+import { createStore, applyMiddleware, compose } from 'redux'
 import reducers from './src/redux/reducers';
 import Routes from './src/routes/routes';
+import logger from 'redux-logger';
+import saga from './src/redux/saga';
 
 import createSagaMiddleware from 'redux-saga';
 
@@ -12,17 +13,13 @@ import createSagaMiddleware from 'redux-saga';
 export default class App extends React.Component {
 
   render() {
-    const middleWare = [];
+    const configureStore = () => {
     const sagaMiddleware = createSagaMiddleware();
-    middleWare.push(sagaMiddleware)
-
-    const loggerMiddleware = createLogger({
-      predicate: () => process.env.NODE_ENV === 'development',
-    });
-
-    middleWare.push(loggerMiddleware);
-    const store = createStore(reducers, {}, applyMiddleware(...middleWare));
-    sagaMiddleware.run();
+      const store = createStore(reducers, compose(applyMiddleware(logger, sagaMiddleware)));
+      sagaMiddleware.run(saga);
+      return store;
+    };
+    const store = configureStore();
     return (
       <Fragment>
         <Provider store={store}>

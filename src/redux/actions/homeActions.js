@@ -1,7 +1,3 @@
-export const LIST_LOADING_INITIATE = 'LIST_LOADING_INITIATE';
-export const LIST_LOADING_SUCCESS = 'LIST_LOADING_SUCCESS';
-export const LOAD_USERS_FAILED = 'LOAD_USERS_FAILED';
+import {WATCH_HOLIDAY_LIST} from '../constants/index';
 
-export const loadHolidayList = () => dispatch => {
-  dispatch({type: LIST_LOADING_INITIATE});
-};
+export const loadHolidayList = () => ({type: WATCH_HOLIDAY_LIST});
