@@ -1,0 +1,1 @@
+export const HOME_INITIATE = 'HOME_INITIATE';
